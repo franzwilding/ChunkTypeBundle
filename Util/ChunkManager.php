@@ -29,25 +29,28 @@ class ChunkManager
   /**
    * @param string $key
    * @param FormTypeInterface $form
-   * @param string $model
    */
-  public function registerChunkType($key, $form, $model)
+  public function registerChunkType($key, $form)
   {
-    $this->chunkTypes->set($key, new ChunkType($key, $form, $model));
+    $this->chunkTypes->set($key, new ChunkType($key, $form));
   }
 
   /**
    * Returns all chunks as options.
    *
+   * @param array $keys
    * @return array
    */
-  public function getChunkOptions()
+  public function getChunkOptions($keys = array())
   {
     $options = array();
-    foreach($this->chunkTypes as $type)
+    foreach($keys as $key)
     {
-      $options[$type->getKey()] = $type->getKey();
+      if($this->chunkTypes->containsKey($key)) {
+        $options[$key] = $key;
+      }
     }
+    return $options;
   }
 
   /**

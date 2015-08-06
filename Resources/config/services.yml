@@ -4,8 +4,8 @@ services:
       class: ChunkTypeBundle\Util\ChunkManager
       arguments: [ @doctrine.orm.default_entity_manager ]
 
-    chunk.widget:
+    chunk.form.type.widget:
       class: ChunkTypeBundle\Form\Type\ChunkWidgetType
-      arguments: [ @chunk.manager ]
+      arguments: [ @chunk.manager, @request_stack ]
       tags:
         - { name: form.type, alias: chunk }

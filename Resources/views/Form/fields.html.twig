@@ -1,0 +1,15 @@
+{% block chunk_widget %}
+  {%- set attr = attr|merge({'data-chunk-id': form.vars.id }) -%}
+  <div {{ block('widget_container_attributes') }}>
+
+    {% if form.vars.preview is defined %}
+      <p>PREVIEW: {{ form.vars.preview }}</p>
+    {% endif %}
+
+    {%- if form.parent is empty -%}
+      {{ form_errors(form) }}
+    {%- endif -%}
+    {{- block('form_rows') -}}
+    {{- form_rest(form) -}}
+  </div>
+{% endblock %}

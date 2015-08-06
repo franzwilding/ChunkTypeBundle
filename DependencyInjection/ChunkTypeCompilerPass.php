@@ -1,6 +1,6 @@
 <?php
 
-namespace ChunkTypeBundle;
+namespace ChunkTypeBundle\DependencyInjection;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -13,7 +13,8 @@ class ChunkTypeCompilerPass implements CompilerPassInterface
   /**
    * @var array
    */
-  private $requiredAttributes = array('form', 'model');
+  //private $requiredAttributes = array('form', 'model');
+  private $requiredAttributes = array();
 
 
   public function __construct()
@@ -33,11 +34,11 @@ class ChunkTypeCompilerPass implements CompilerPassInterface
       return;
     }
 
-    $definition = $container->getDefinition('chunk.manager');
+    $definition = $container->findDefinition('chunk.manager');
     $taggedServices = $container->findTaggedServiceIds('chunk.type');
 
     foreach ($taggedServices as $key => $tags) {
-      foreach ($tags as $attributes) {
+      /*foreach ($tags as $attributes) {
 
         ksort($attributes);
 
@@ -46,13 +47,14 @@ class ChunkTypeCompilerPass implements CompilerPassInterface
         }
 
         // add key attribute
-        $attr = array($key);
+        $attr = array($key, new Reference($key));
 
         // add all other attributes as config
         $attr[] = $attributes;
 
         $definition->addMethodCall('registerChunkType', $attr);
-      }
+      }*/
+      $definition->addMethodCall('registerChunkType', array($key, new Reference($key)));
     }
   }
 }

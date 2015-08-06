@@ -16,21 +16,15 @@ class ChunkType
    */
   private $form;
 
-  /**
-   * @var string $model
-   */
-  private $model;
 
   /**
    * @param string $key
    * @param FormTypeInterface $form
-   * @param string $model
    */
-  public function __construct($key, $form, $model)
+  public function __construct($key, $form)
   {
     $this->key = $key;
     $this->form = $form;
-    $this->model = $model;
   }
 
   /**

@@ -2,6 +2,7 @@
 
 namespace ChunkTypeBundle;
 
+use ChunkTypeBundle\DependencyInjection\ChunkTypeCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 

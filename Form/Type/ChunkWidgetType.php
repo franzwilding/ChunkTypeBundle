@@ -6,6 +6,11 @@ use ChunkTypeBundle\EventListener\AddChunkFormListener;
 use ChunkTypeBundle\Util\ChunkManager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormTypeInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 
@@ -17,9 +22,15 @@ class ChunkWidgetType extends AbstractType
    */
   private $chunkManager;
 
-  public function __construct(ChunkManager $chunkManager)
+  /**
+   * @var RequestStack $requestStack
+   */
+  private $requestStack;
+
+  public function __construct(ChunkManager $chunkManager, RequestStack $requestStack)
   {
     $this->chunkManager = $chunkManager;
+    $this->requestStack = $requestStack;
   }
 
   /**
@@ -27,18 +38,17 @@ class ChunkWidgetType extends AbstractType
    */
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
-    $choices = array();
+    $builder->addEventSubscriber(new AddChunkFormListener($this->chunkManager, $options['chunks'], $this->requestStack->getCurrentRequest()));
+  }
 
-    $builder->add('id', 'hidden');
-    $builder->add('weight', 'hidden');
-    $builder->add('chunkType', 'choice', array(
-      'choices'   => $this->chunkManager->getChunkOptions(),
-      'multiple'  => false,
-      'expanded'  => true,
-      'mapped'    => false,
-      'required'  => true,
-    ));
-    $builder->addEventSubscriber(new AddChunkFormListener($this->chunkManager));
+  /**
+   * {@inheritdoc}
+   */
+  public function buildView(FormView $view, FormInterface $form, array $options)
+  {
+    if($form->getData() && array_key_exists('preview', $form->getData())) {
+      $view->vars['preview'] = $form->getData()['preview'];
+    }
   }
 
   /**
@@ -47,7 +57,7 @@ class ChunkWidgetType extends AbstractType
   public function setDefaultOptions(OptionsResolverInterface $resolver)
   {
     $resolver->setDefaults(array(
-      'label' => false,
+      'chunks' => array(),
     ));
   }
 
@@ -56,6 +66,6 @@ class ChunkWidgetType extends AbstractType
    */
   public function getName()
   {
-    return 'chunk_widget_type';
+    return 'chunk';
   }
 }
